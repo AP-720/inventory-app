@@ -1,0 +1,40 @@
+<div class="product-card">
+	<h3><%= product.name %></h3>
+	<p class="product-info-container">
+		<p>
+            <span class="bold">Origin:</span>
+            <span><%= product.origin_region %></span> -
+            <span><%= product.origin_country %></span>
+        </p>
+		<p>
+            <span class="bold">Roaster:</span>
+            <span><%= product.roaster_name %></span> -
+            <span><%= product.roaster_country %></span>
+        </p>
+		<p>
+            <span class="bold">Process:</span>
+            <span><%= product.process %></span>
+        </p>
+		<p>
+            <span class="bold">Variety:</span>
+            <span><%= product.variety %></span>
+        </p>
+		<p>
+            <span class="bold">Tasting Notes:</span>
+            <span><%= product.tasting_notes %></span>
+        </p>
+		<p>
+            <span class="bold">Roast Style:</span>
+            <span><%= product.roast_style %></span>
+        </p>
+		<p>
+            <span class="bold">Roast Type:</span>
+            <span><%= product.roast_type %></span>
+        </p>
+		<p>
+            <span class="bold">Price:</span>
+            £<span><%= product.price %></span>
+        </p>
+	</p>
+	<a href="/products/<%= product.id %>">Edit</a>
+</div>

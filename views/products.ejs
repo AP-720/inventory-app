@@ -2,5 +2,11 @@
 	<%- include('./partials/head.ejs') %>
 	<body>
 		<h1><%= title %></h1>
+		<a href="/">Back to Home</a>
+		<div class="product-container">
+			<% products.forEach((product) => { %> <%-
+			include('./partials/productCard.ejs', {product}) %> <% }) %>
+		</div>
 	</body>
 </html>
+	

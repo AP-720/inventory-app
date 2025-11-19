@@ -15,7 +15,9 @@ async function getProductEditForm(req, res) {
 	const productId = Number(req.params.id);
 
 	try {
-		// const product = await db.getProductById(productId);
+		const product = await db.getProductById(productId);
+		console.log(product);
+		
 
 		// const [product, roasters, origins, processes, roasts]  = await Promise.all([
 		// 	db.getProductById(productId), 
@@ -25,21 +27,21 @@ async function getProductEditForm(req, res) {
 		// 	db.getAllRoasts(),
 		// ])
 
-		const product = [
-			{
-				id: 1,
-				name: "La Esperanza",
-				roaster_name: "Crank House Coffee",
-				roaster_country: "UK",
-				origin_country: "Guatemala",
-				process: "Washed",
-				variety: "Caturra, Bourbon, Catuai, Pache",
-				tasting_notes: "Gooseberry, red apple, caramel",
-				roast_style: "Light",
-				roast_type: "Filter",
-				price: 20,
-			},
-		];
+		// const product = [
+		// 	{
+		// 		id: 1,
+		// 		name: "La Esperanza",
+		// 		roaster_name: "Crank House Coffee",
+		// 		roaster_country: "UK",
+		// 		origin_country: "Guatemala",
+		// 		process: "Washed",
+		// 		variety: "Caturra, Bourbon, Catuai, Pache",
+		// 		tasting_notes: "Gooseberry, red apple, caramel",
+		// 		roast_style: "Light",
+		// 		roast_type: "Filter",
+		// 		price: 20,
+		// 	},
+		// ];
 
 		const roasters = [
 			"Formative", "Crank House Coffee", "Full Court Press",

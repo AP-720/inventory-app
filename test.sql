@@ -22,6 +22,7 @@ LEFT JOIN product_categories
 ON coffees.id=product_categories.coffee_id
 LEFT JOIN  categories
 ON product_categories.category_id=categories.id
+WHERE coffees.id=1
 GROUP BY 
 coffees.id,
 coffees.name,

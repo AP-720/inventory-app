@@ -45,7 +45,7 @@ async function getAllProducts() {
 
     }
 
-    async function getProductById(query) {
+async function getProductById(query) {
     const  { rows }  = await pool.query(
         `
         SELECT 
@@ -91,8 +91,45 @@ async function getAllProducts() {
     return rows[0];
 }
 
+async function getAllRoasters() {
+    const { rows } = await pool.query('SELECT DISTINCT * FROM roasters ORDER BY name;')
+    return rows;
+}
 
-    module.exports = {
-        getAllProducts,
-        getProductById,
+async function getAllOrigins() {
+    const { rows } = await pool.query('SELECT DISTINCT * FROM origins ORDER BY country;')
+    return rows;
+}
+
+async function getAllProcesses() {
+    const { rows } = await pool.query('SELECT DISTINCT * FROM processes ORDER BY name;')
+    return rows;
+}
+
+async function getAllVarieties() {
+    const { rows } = await pool.query('SELECT DISTINCT * FROM varieties ORDER BY name;')
+    return rows;
+}
+
+async function getAllRoastsStyles() {
+    const { rows } = await pool.query('SELECT DISTINCT style FROM roasts;')
+    return rows;
+}
+
+async function getAllRoastsTypes() {
+    const { rows } = await pool.query('SELECT DISTINCT type FROM roasts;')
+    return rows;
+}
+
+
+
+module.exports = {
+    getAllProducts,
+    getProductById,
+    getAllRoasters,
+    getAllOrigins,
+    getAllProcesses,
+    getAllVarieties,
+    getAllRoastsStyles,
+    getAllRoastsTypes
     }

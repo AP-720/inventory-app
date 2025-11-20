@@ -8,37 +8,48 @@
 
             <label for="roaster_name">Roaster:</label>
             <select name="roaster_name" id="roaster_name">
-                <% roasters.forEach((roaster) => { %>
-                 <option value="<%= roaster %>" <%= product.roaster_name === roaster ? "selected" : "" %> > <%= roaster %> </option>
-               <% }); %>
+              <% roasters.forEach((roaster) => { %>
+                <option value="<%= roaster.name %>" <%= product.roaster_name === roaster.name ? "selected" : "" %> > <%= roaster.name %> </option>
+              <% }); %>
             </select>
 
             <label for="origin_country">Country</label>
             <select name="origin_country" id="origin_country">
-                  <% origins.forEach((origin) => { %>
-                 <option value="<%= origin %>" <%= product.origin === origin ? "selected" : "" %> > <%= origin %> </option>
-               <% }); %>
+              <% origins.forEach((origin) => { %>
+                 <option value="<%= origin.country %>" <%= product.origin === origin.country ? "selected" : "" %> > <%= origin.country %> </option>
+              <% }); %>
             </select>
-            <label for="process">Process Type:</label>
+
+            <label for="process">Process:</label>
             <select name="process" id="process">
-                   <% processes.forEach((process) => { %>
-                 <option value="<%= process %>" <%= product.process === process ? "selected" : "" %> > <%= process %> </option>
-               <% }); %>
+              <% processes.forEach((process) => { %>
+                <option value="<%= process.name %>" <%= product.process === process.name ? "selected" : "" %> > <%= process.name %> </option>
+              <% }); %>
+            </select>
+
+            <label for="variety">Variety:</label>
+            <select name="variety" id="variety">
+              <% varieties.forEach((variety) => { %>
+                <option value="<%= variety.name %>" <%= product.variety === variety.name ? "selected" : "" %> > <%= variety.name %> </option>
+              <% }); %>
             </select>
 
             <label for="roast_style">Roast Style:</label>
             <select name="roast_style" id="roast_style">
-                   <% roasts.style.forEach((roastStyle) => { %>
-                 <option value="<%= roastStyle %>" <%= product.roast_style === roastStyle ? "selected" : "" %> > <%= roastStyle %> </option>
-               <% }); %>
+              <% roastsStyles.forEach((roast) => { %>
+                <option value="<%= roast.style %>" <%= product.roast_style === roast.style ? "selected" : "" %> > <%= roast.style %> </option>
+              <% }); %>
             </select>
 
             <label for="roast_type">Roast Type:</label>
             <select name="roast_type" id="roast_type">
-                   <% roasts.type.forEach((roastType) => { %>
-                 <option value="<%= roastType %>" <%= product.roast_type === roastType ? "selected" : "" %> > <%= roastType %> </option>
-               <% }); %>
+              <% roastsType.forEach((roast) => { %>
+                <option value="<%= roast.type %>" <%= product.roast_type === roast.type ? "selected" : "" %> > <%= roast.type %> </option>
+              <% }); %>
             </select>
+
+            <label for="price">Price:</label>
+            <input type="number" name="price" id="price" step="0.01" value="<%= product.price %>" required>
 
             <button type="submit">Update</button>
         </form>

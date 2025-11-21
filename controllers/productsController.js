@@ -28,7 +28,6 @@ async function getProductEditForm(req, res) {
 
 		console.log(product);
 		
-
 		if (!product) {
 			res.status(404).send("Product not found");
 			return;

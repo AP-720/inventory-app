@@ -27,6 +27,22 @@
               <% }); %>
             </select>
 
+            <fieldset>
+              <legend>Variety:</legend>
+              <% varieties.forEach((variety) => { %>
+                <div>
+                   <input 
+                   type="checkbox" 
+                   name="varieties" 
+                   id="<%= variety.name %>" 
+                   value="<%= variety.name %>"
+                   <%= product.varieties.includes(variety.name) ? "checked" : "" %>
+                   >
+                  <label for="<%= variety.name %>"><%= variety.name %></label>
+                </div>
+              <% }); %>
+            </fieldset>
+
             <label for="variety">Variety:</label>
             <select name="variety" id="variety">
               <% varieties.forEach((variety) => { %>

@@ -1,8 +1,8 @@
-const pool = require('./pool')
+const pool = require("./pool");
 
 async function getAllProducts() {
-    const { rows } = await pool.query(
-        `
+	const { rows } = await pool.query(
+		`
         SELECT 
             coffees.id, 
             coffees.name AS coffee_name, 
@@ -39,15 +39,14 @@ async function getAllProducts() {
             roasts.style,
             roasts.type
         `
-    );
+	);
 
-    return rows;
-
-    }
+	return rows;
+}
 
 async function getProductById(query) {
-    const  { rows }  = await pool.query(
-        `
+	const { rows } = await pool.query(
+		`
         SELECT 
             coffees.id, 
             coffees.name AS coffee_name, 
@@ -85,51 +84,57 @@ async function getProductById(query) {
             roasts.style,
             roasts.type
         `,
-        [query]
-    );
+		[query]
+	);
 
-    return rows[0];
+	return rows[0];
 }
 
 async function getAllRoasters() {
-    const { rows } = await pool.query('SELECT DISTINCT * FROM roasters ORDER BY name;')
-    return rows;
+	const { rows } = await pool.query(
+		"SELECT DISTINCT * FROM roasters ORDER BY name;"
+	);
+	return rows;
 }
 
 async function getAllOrigins() {
-    const { rows } = await pool.query('SELECT DISTINCT * FROM origins ORDER BY country;')
-    return rows;
+	const { rows } = await pool.query(
+		"SELECT DISTINCT * FROM origins ORDER BY country;"
+	);
+	return rows;
 }
 
 async function getAllProcesses() {
-    const { rows } = await pool.query('SELECT DISTINCT * FROM processes ORDER BY name;')
-    return rows;
+	const { rows } = await pool.query(
+		"SELECT DISTINCT * FROM processes ORDER BY name;"
+	);
+	return rows;
 }
 
 async function getAllVarieties() {
-    const { rows } = await pool.query('SELECT DISTINCT * FROM varieties ORDER BY name;')
-    return rows;
+	const { rows } = await pool.query(
+		"SELECT DISTINCT * FROM varieties ORDER BY name;"
+	);
+	return rows;
 }
 
 async function getAllRoastsStyles() {
-    const { rows } = await pool.query('SELECT DISTINCT style FROM roasts;')
-    return rows;
+	const { rows } = await pool.query("SELECT DISTINCT style FROM roasts;");
+	return rows;
 }
 
 async function getAllRoastsTypes() {
-    const { rows } = await pool.query('SELECT DISTINCT type FROM roasts;')
-    return rows;
+	const { rows } = await pool.query("SELECT DISTINCT type FROM roasts;");
+	return rows;
 }
 
-
-
 module.exports = {
-    getAllProducts,
-    getProductById,
-    getAllRoasters,
-    getAllOrigins,
-    getAllProcesses,
-    getAllVarieties,
-    getAllRoastsStyles,
-    getAllRoastsTypes
-    }
+	getAllProducts,
+	getProductById,
+	getAllRoasters,
+	getAllOrigins,
+	getAllProcesses,
+	getAllVarieties,
+	getAllRoastsStyles,
+	getAllRoastsTypes,
+};

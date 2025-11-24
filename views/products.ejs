@@ -3,10 +3,10 @@
 	<body>
 		<h1><%= title %></h1>
 		<a href="/">Back to Home</a>
+		<a href="products/new">Add Product</a>
 		<div class="product-container">
 			<% products.forEach((product) => { %> <%-
 			include('./partials/productCard.ejs', {product}) %> <% }) %>
 		</div>
 	</body>
 </html>
-	

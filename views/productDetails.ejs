@@ -43,13 +43,6 @@
               <% }); %>
             </fieldset>
 
-            <label for="variety">Variety:</label>
-            <select name="variety" id="variety">
-              <% varieties.forEach((variety) => { %>
-                <option value="<%= variety.name %>" <%= product.variety === variety.name ? "selected" : "" %> > <%= variety.name %> </option>
-              <% }); %>
-            </select>
-
             <label for="roast_style">Roast Style:</label>
             <select name="roast_style" id="roast_style">
               <% roastsStyles.forEach((roast) => { %>

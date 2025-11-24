@@ -1,0 +1,66 @@
+<html>
+	<%- include('./partials/head.ejs') %>
+	<body>
+		<h1><%= title %></h1>
+		<form action="new" method="post">
+			<label for="coffee_name">Name:</label>
+			<input type="text" name="coffee_name" id="coffee_name" required />
+
+			<label for="roaster_name">Roaster:</label>
+			<input type="text" name="roaster_name" id="roaster_name" required />
+
+			<label for="roaster_country">Roaster Country:</label>
+			<input type="text" name="roaster_country" id="roaster_country" required />
+
+			<label for="origin">Country:</label>
+			<input type="text" name="origin" id="origin" required />
+
+			<label for="process">Process:</label>
+			<input type="text" name="process" id="process" required />
+
+			<fieldset>
+				<legend>Variety:</legend>
+				<% varieties.forEach((variety) => { %>
+				<div>
+					<input
+						type="checkbox"
+						name="varieties"
+						id="<%= variety.name %>"
+						value="<%= variety.name %>"
+					/>
+					<label for="<%= variety.name %>"><%= variety.name %></label>
+				</div>
+				<% }); %>
+			</fieldset>
+
+			<label for="tasting_notes">Tasting Notes::</label>
+			<input type="text" name="tasting_notes" id="tasting_notes" required />
+
+			<label for="roast_style">Roast Style:</label>
+			<select name="roast_style" id="roast_style">
+				<% roastsStyles.forEach((roast) => { %>
+				<option value="<%= roast.style %>"><%= roast.style %></option>
+				<% }); %>
+			</select>
+
+			<label for="roast_type">Roast Type:</label>
+			<select name="roast_type" id="roast_type">
+				<% roastsType.forEach((roast) => { %>
+				<option value="<%= roast.type %>"><%= roast.type %></option>
+				<% }); %>
+			</select>
+
+			<label for="price">Price:</label>
+			<input
+				type="number"
+				name="price"
+				id="price"
+				step="0.01"
+				min="0"
+				required
+			/>
+
+			<button type="submit">Add</button>
+		</form>
+	</body>
+</html>

@@ -1,4 +1,62 @@
 const db = require("../db/queries");
+const { body, validationResult, matchedData } = require("express-validator");
+
+// Using matches with the regex rather than .alpha as its too strict and doesn't allow spaces, hyphens and apostrophes.
+const alphaSpace = /^[\p{L}\s'-]+$/u; // letters, spaces, hyphens, apostrophes
+
+const alphaErr = "must only contain letters, spaces, hyphens, or apostrophes.";
+const lengthErr = "must be between 2 and 255 characters.";
+
+const validateNewProduct = [
+	body("coffee_name")
+		.trim()
+		.notEmpty()
+		.withMessage(`Coffee name can not be empty.`)
+		.matches(alphaSpace)
+		.withMessage(`Coffee name ${alphaErr}`)
+		.isLength({ min: 2, max: 255 })
+		.withMessage(`Coffee name ${lengthErr}`),
+	body("roaster_name")
+		.trim()
+		.notEmpty()
+		.withMessage(`Roaster name can not be empty.`)
+		.isLength({ min: 2, max: 255 })
+		.withMessage(`Roaster name ${lengthErr}`),
+	body("roaster_country")
+		.trim()
+		.notEmpty()
+		.withMessage(`Roaster country can not be empty.`)
+		.matches(alphaSpace)
+		.withMessage(`Roaster country ${alphaErr}`)
+		.isLength({ min: 2, max: 48 })
+		.withMessage(`Roaster country must be between 1 and 48 characters.`),
+	body("origin")
+		.trim()
+		.notEmpty()
+		.withMessage(`Origin can not be empty.`)
+		.matches(alphaSpace)
+		.withMessage(`Origin ${alphaErr}`)
+		.isLength({ min: 2, max: 255 })
+		.withMessage(`Origin country ${lengthErr}`),
+	body("process")
+		.trim()
+		.notEmpty()
+		.withMessage(`Process can not be empty.`)
+		.isLength({ min: 2, max: 255 })
+		.withMessage(`Process ${lengthErr}`),
+	body("tasting_notes")
+		.trim()
+		.notEmpty()
+		.withMessage(`Tasting notes can not be empty.`)
+		.isLength({ min: 2, max: 255 })
+		.withMessage(`Tasting notes ${lengthErr}`),
+	body("price")
+		// Use isFloat as it allows decimals, unlike isInt().
+		.isFloat({ min: 1 })
+		.withMessage("Price must be greater than 0.")
+		.notEmpty()
+		.withMessage(`Price can not be empty.`),
+];
 
 async function getAllProducts(req, res) {
 	try {
@@ -31,37 +89,76 @@ async function getNewProduct(req, res) {
 	}
 }
 
-async function postNewProduct(req, res) {
-	try {
-		console.log(req.body);
+// async function postNewProduct(req, res) {
+// 	try {
+// 		console.log(req.body);
 
-		res.redirect("/products");
-	} catch (err) {
-		console.error(err);
-		res.status(500).send("Server error");
-	}
-}
+// 		res.redirect("/products");
+// 	} catch (err) {
+// 		console.error(err);
+// 		res.status(500).send("Server error");
+// 	}
+// }
+
+const postNewProduct = [
+	validateNewProduct,
+	async (req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			const options = await loadProductFormOptions(db);
+
+			return res.status(400).render("newProduct", {
+				title: "New Product",
+				...options,
+				errors: errors.array(),
+			});
+		}
+
+		const {
+			coffee_name,
+			roaster_name,
+			roaster_country,
+			origin,
+			process,
+			tasting_notes,
+			price,
+		} = matchedData(req);
+
+		const roast_style = req.body.roast_style;
+		const roast_type = req.body.roast_type;
+		const varieties = req.body.varieties;
+
+		const newProduct = {
+			coffee_name,
+			origin,
+			roaster_name,
+			roaster_country,
+			price,
+			tasting_notes,
+			process,
+			roast_style,
+			roast_type,
+			varieties,
+		};
+
+		try {
+			console.log("postNewProduct:", newProduct);
+
+			res.redirect("/products");
+		} catch (err) {
+			console.error(err);
+			res.status(500).send("Server error");
+		}
+	},
+];
 
 async function getProductEditForm(req, res) {
 	const productId = Number(req.params.id);
 
 	try {
-		const [
-			product,
-			roasters,
-			origins,
-			processes,
-			varieties,
-			roastsStyles,
-			roastsType,
-		] = await Promise.all([
+		const [product, options] = await Promise.all([
 			db.getProductById(productId),
-			db.getAllRoasters(),
-			db.getAllOrigins(),
-			db.getAllProcesses(),
-			db.getAllVarieties(),
-			db.getAllRoastsStyles(),
-			db.getAllRoastsTypes(),
+			loadProductFormOptions(db),
 		]);
 
 		console.log(product);
@@ -74,12 +171,7 @@ async function getProductEditForm(req, res) {
 		res.render("productDetails", {
 			title: "Product Details",
 			product,
-			roasters,
-			origins,
-			processes,
-			varieties,
-			roastsStyles,
-			roastsType,
+			...options,
 		});
 	} catch (err) {
 		console.error("Error loading product edit form:", err);
@@ -93,6 +185,34 @@ async function postProductEditForm(req, res) {
 	console.log(req.body);
 
 	res.redirect("/products");
+}
+
+// Helpers
+
+async function loadProductFormOptions(db) {
+	try {
+		const [roasters, origins, processes, varieties, roastsStyles, roastsType] =
+			await Promise.all([
+				db.getAllRoasters(),
+				db.getAllOrigins(),
+				db.getAllProcesses(),
+				db.getAllVarieties(),
+				db.getAllRoastsStyles(),
+				db.getAllRoastsTypes(),
+			]);
+
+		return {
+			roasters,
+			origins,
+			processes,
+			varieties,
+			roastsStyles,
+			roastsType,
+		};
+	} catch (err) {
+		console.error("Error loading product form options:", err);
+		res.status(500).send("Server error");
+	}
 }
 
 module.exports = {

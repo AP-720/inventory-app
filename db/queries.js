@@ -128,6 +128,10 @@ async function getAllRoastsTypes() {
 	return rows;
 }
 
+async function postNewProduct() {
+    
+}
+
 module.exports = {
 	getAllProducts,
 	getProductById,

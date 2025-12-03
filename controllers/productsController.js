@@ -115,7 +115,10 @@ const postNewProduct = [
 
 		const roast_style = req.body.roast_style;
 		const roast_type = req.body.roast_type;
-		const varieties = req.body.varieties;
+		// Standardize the multiple checkboxes input. So that it is always an array because when a single option is selected a string is returned. This was causing a bug where the string was then being split and single letters were then variety options. 
+		const varieties = Array.isArray(req.body.varieties)
+			? req.body.varieties
+			: [req.body.varieties];
 
 		const newProduct = {
 			coffee_name,

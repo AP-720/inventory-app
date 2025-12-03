@@ -89,17 +89,6 @@ async function getNewProduct(req, res) {
 	}
 }
 
-// async function postNewProduct(req, res) {
-// 	try {
-// 		console.log(req.body);
-
-// 		res.redirect("/products");
-// 	} catch (err) {
-// 		console.error(err);
-// 		res.status(500).send("Server error");
-// 	}
-// }
-
 const postNewProduct = [
 	validateNewProduct,
 	async (req, res) => {
@@ -142,8 +131,7 @@ const postNewProduct = [
 		};
 
 		try {
-			console.log("postNewProduct:", newProduct);
-
+			await db.postNewProduct(newProduct);
 			res.redirect("/products");
 		} catch (err) {
 			console.error(err);

@@ -10,7 +10,6 @@ async function getAllProducts() {
             roasters.name AS roaster_name, 
             roasters.country AS roaster_country, 
             price, 
-            producer, 
             tasting_notes, 
             processes.name AS process, 
             roasts.style AS roast_style, 
@@ -32,8 +31,7 @@ async function getAllProducts() {
             origins.country,
             roasters.name,
             roasters.country,
-            price, 
-            producer, 
+            price,
             tasting_notes,
             processes.name,
             roasts.style,
@@ -54,7 +52,6 @@ async function getProductById(query) {
             roasters.name AS roaster_name, 
             roasters.country AS roaster_country, 
             price, 
-            producer, 
             tasting_notes, 
             processes.name AS process, 
             roasts.style AS roast_style, 
@@ -78,7 +75,6 @@ async function getProductById(query) {
             roasters.name,
             roasters.country,
             price, 
-            producer, 
             tasting_notes,
             processes.name,
             roasts.style,
@@ -128,8 +124,141 @@ async function getAllRoastsTypes() {
 	return rows;
 }
 
-async function postNewProduct() {
-    
+async function postNewProduct(newProduct) {
+	const {
+		coffee_name,
+		origin,
+		roaster_name,
+		roaster_country,
+		price,
+		tasting_notes,
+		process,
+		roast_style,
+		roast_type,
+		varieties,
+	} = newProduct;
+
+	// Using a client from the pool means that uses same connection throughout, all queries use same connection, Atomicity: All operations succeed or all fail. So use when related operations that must succeed together.
+	const client = await pool.connect();
+
+	try {
+		// Use a transaction, when all the batch updates must succeed. Without BEGIN, each SQL statement would auto-commit immediately, making partial updates possible if errors occur mid-operation.
+		await client.query("BEGIN");
+
+		// Upsert varieties and collect ids
+		const varietyIdArray = [];
+		const upsertVarietySQL = `
+            INSERT INTO varieties (name)
+            VALUES ($1)
+            ON CONFLICT (name)
+            DO UPDATE SET name = EXCLUDED.name
+            RETURNING id AS variety_id;
+        `;
+
+		for (const varietyName of varieties) {
+			try {
+				const result = await client.query(upsertVarietySQL, [varietyName]);
+
+				varietyIdArray.push(result.rows[0].variety_id);
+			} catch (err) {
+				console.error("Error during variety upsert:", err);
+			}
+		}
+
+		// Individual upserts
+		const originResult = await client.query(
+			`
+                INSERT INTO origins (country)
+                VALUES ($1)
+                ON CONFLICT (country)
+                DO UPDATE SET country = EXCLUDED.country
+                RETURNING id AS origin_id;
+            `,
+			[origin]
+		);
+		const originId = originResult.rows[0].origin_id;
+
+		const roastersResult = await client.query(
+			`
+                INSERT INTO roasters (name, country)
+                VALUES ($1, $2)
+                ON CONFLICT (name)
+                DO UPDATE SET name = EXCLUDED.name
+                RETURNING id AS roaster_id;
+            `,
+			[roaster_name, roaster_country]
+		);
+		const roasterId = roastersResult.rows[0].roaster_id;
+
+		const processResult = await client.query(
+			`
+                INSERT INTO processes (name)
+                VALUES ($1)
+                ON CONFLICT (name)
+                DO UPDATE SET name = EXCLUDED.name
+                RETURNING id AS process_id;
+            `,
+			[process]
+		);
+		const processId = processResult.rows[0].process_id;
+
+		// Select roast_id (must exist in roasts table)
+		const roastResult = await client.query(
+			`
+                SELECT id AS roast_id
+                FROM roasts
+                WHERE style = $1 AND type = $2;
+            `,
+			[roast_style, roast_type]
+		);
+		if (!roastResult.rows[0]) throw new Error("Selected roast not found");
+		const roastId = roastResult.rows[0].roast_id;
+
+		// Main Insert to coffees table and return coffee_id
+		const coffeeResult = await client.query(
+			`
+                INSERT INTO coffees(name, origin_id, roaster_id, price, tasting_notes, process_id, roast_id)
+                VALUES ($1, $2, $3, $4, $5, $6, $7)
+                RETURNING id AS coffee_id;
+            `,
+			[
+				coffee_name,
+				originId,
+				roasterId,
+				price,
+				tasting_notes,
+				processId,
+				roastId,
+			]
+		);
+
+		const coffeeId = coffeeResult.rows[0].coffee_id;
+
+		// If there are varieties, batch insert them into the join table
+		if (varietyIdArray.length > 0) {
+			// Create an array the same length as the varietyIdArray and fill it all with the coffeeId so can be used with UNNEST
+			const coffeeIdArray = Array(varietyIdArray.length).fill(coffeeId);
+			await client.query(
+				`
+        INSERT INTO coffee_varieties (coffee_id, variety_id)
+        SELECT * FROM UNNEST($1::int[], $2::int[]) AS t(coffee_id, variety_id);
+        `,
+				[coffeeIdArray, varietyIdArray]
+			);
+		}
+
+		await client.query("COMMIT");
+		console.log("postNewProduct Coffee Id:", coffeeId);
+
+		return coffeeId;
+	} catch (err) {
+		// If it fails doesn't commit the partial data.
+		await client.query("ROLLBACK");
+		console.error("postNewProduct error:", err);
+		throw err;
+	} finally {
+		client.release();
+	}
 }
 
 module.exports = {
@@ -141,4 +270,5 @@ module.exports = {
 	getAllVarieties,
 	getAllRoastsStyles,
 	getAllRoastsTypes,
+	postNewProduct,
 };

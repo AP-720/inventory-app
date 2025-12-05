@@ -115,7 +115,7 @@ const postNewProduct = [
 
 		const roast_style = req.body.roast_style;
 		const roast_type = req.body.roast_type;
-		// Standardize the multiple checkboxes input. So that it is always an array because when a single option is selected a string is returned. This was causing a bug where the string was then being split and single letters were then variety options. 
+		// Standardize the multiple checkboxes input. So that it is always an array because when a single option is selected a string is returned. This was causing a bug where the string was then being split and single letters were then variety options.
 		const varieties = Array.isArray(req.body.varieties)
 			? req.body.varieties
 			: [req.body.varieties];
@@ -152,15 +152,13 @@ async function getProductEditForm(req, res) {
 			loadProductFormOptions(db),
 		]);
 
-		console.log(product);
-
 		if (!product) {
 			res.status(404).send("Product not found");
 			return;
 		}
 
 		res.render("productDetails", {
-			title: "Product Details",
+			title: "Edit Product",
 			product,
 			...options,
 		});
@@ -170,13 +168,69 @@ async function getProductEditForm(req, res) {
 	}
 }
 
-async function postProductEditForm(req, res) {
-	// const product = await db.getProduceById(req.params.id)
-	console.log(req.params.id);
-	console.log(req.body);
+const postProductUpdate = [
+	validateNewProduct,
+	async (req, res) => {
+		const errors = validationResult(req);
+		if (!errors.isEmpty()) {
+			const productId = Number(req.params.id);
 
-	res.redirect("/products");
-}
+			// Need to fetch this again if there is an error to pass to view.
+			const [product, options] = await Promise.all([
+				db.getProductById(productId),
+				loadProductFormOptions(db),
+			]);
+
+			return res.status(400).render("productDetails", {
+				title: "Edit Product",
+				product,
+				...options,
+				errors: errors.array(),
+			});
+		}
+
+		const productId = Number(req.params.id);
+
+		const {
+			coffee_name,
+			roaster_name,
+			roaster_country,
+			origin,
+			process,
+			tasting_notes,
+			price,
+		} = matchedData(req);
+
+		const roast_style = req.body.roast_style;
+		const roast_type = req.body.roast_type;
+		const varieties = Array.isArray(req.body.varieties)
+			? req.body.varieties
+			: [req.body.varieties];
+
+		const updatedProduct = {
+			coffee_name,
+			origin,
+			roaster_name,
+			roaster_country,
+			price,
+			tasting_notes,
+			process,
+			roast_style,
+			roast_type,
+			varieties,
+		};
+
+		console.log("postProductUpdate:", updatedProduct);
+
+		try {
+			await db.updateProduct(updatedProduct, productId);
+			res.redirect("/products");
+		} catch (err) {
+			console.error(err);
+			res.status(500).send("Server error");
+		}
+	},
+];
 
 // Helpers
 
@@ -211,5 +265,5 @@ module.exports = {
 	getNewProduct,
 	postNewProduct,
 	getProductEditForm,
-	postProductEditForm,
+	postProductUpdate,
 };

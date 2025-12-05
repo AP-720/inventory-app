@@ -2,65 +2,100 @@
 	<%- include('./partials/head.ejs') %>
     <body>
         <h1><%= title %></h1>
+        <%- include('./partials/errors.ejs') %>
         <form action="<%= product.id %>/update" method="post">
-            <label for="name">Name:</label>
-            <input type="text" name="name" id="name" value="<%= product.coffee_name %>" required>
+           <label for="coffee_name">Name:</label>
+			<input
+				type="text"
+				name="coffee_name"
+				id="coffee_name"
+				value="<%= product.coffee_name %>"
+				required
+			/>
 
-            <label for="roaster_name">Roaster:</label>
-            <select name="roaster_name" id="roaster_name">
-              <% roasters.forEach((roaster) => { %>
-                <option value="<%= roaster.name %>" <%= product.roaster_name === roaster.name ? "selected" : "" %> > <%= roaster.name %> </option>
-              <% }); %>
-            </select>
+			<label for="roaster_name">Roaster:</label>
+			<input
+				type="text"
+				name="roaster_name"
+				id="roaster_name"
+				value="<%= product.roaster_name %>"
+				required
+			/>
 
-            <label for="origin_country">Country</label>
-            <select name="origin_country" id="origin_country">
-              <% origins.forEach((origin) => { %>
-                 <option value="<%= origin.country %>" <%= product.origin === origin.country ? "selected" : "" %> > <%= origin.country %> </option>
-              <% }); %>
-            </select>
+			<label for="roaster_country">Roaster Country:</label>
+			<input
+				type="text"
+				name="roaster_country"
+				id="roaster_country"
+				value="<%= product.roaster_country %>"
+				required
+			/>
 
-            <label for="process">Process:</label>
-            <select name="process" id="process">
-              <% processes.forEach((process) => { %>
-                <option value="<%= process.name %>" <%= product.process === process.name ? "selected" : "" %> > <%= process.name %> </option>
-              <% }); %>
-            </select>
+			<label for="origin">Origin Country:</label>
+			<input
+				type="text"
+				name="origin"
+				id="origin"
+				value="<%= product.origin %>"
+				required
+			/>
 
-            <fieldset>
-              <legend>Variety:</legend>
-              <% varieties.forEach((variety) => { %>
-                <div>
-                   <input 
-                   type="checkbox" 
-                   name="varieties" 
-                   id="<%= variety.name %>" 
-                   value="<%= variety.name %>"
-                   <%= product.varieties.includes(variety.name) ? "checked" : "" %>
-                   >
-                  <label for="<%= variety.name %>"><%= variety.name %></label>
-                </div>
-              <% }); %>
-            </fieldset>
+			<label for="process">Process:</label>
+			<input
+				type="text"
+				name="process"
+				id="process"
+				value="<%= product.process %>"
+				required
+			/>
 
-            <label for="roast_style">Roast Style:</label>
-            <select name="roast_style" id="roast_style">
-              <% roastsStyles.forEach((roast) => { %>
+			<fieldset>
+				<legend>Variety:</legend>
+				<% varieties.forEach((variety) => { %>
+				<div>
+					<input type="checkbox" name="varieties" id="<%= variety.name %>"
+					value="<%= variety.name %>" <%=
+					product.varieties.includes(variety.name) ? "checked" : "" %> >
+					<label for="<%= variety.name %>"><%= variety.name %></label>
+				</div>
+				<% }); %>
+			</fieldset>
+
+			<label for="tasting_notes">Tasting Notes:</label>
+			<input
+				type="text"
+				name="tasting_notes"
+				id="tasting_notes"
+				value="<%= product.tasting_notes %>"
+				required
+			/>
+
+			<label for="roast_style">Roast Style:</label>
+			<select name="roast_style" id="roast_style">
+				<% roastsStyles.forEach((roast) => { %>
                 <option value="<%= roast.style %>" <%= product.roast_style === roast.style ? "selected" : "" %> > <%= roast.style %> </option>
               <% }); %>
-            </select>
+			</select>
 
-            <label for="roast_type">Roast Type:</label>
-            <select name="roast_type" id="roast_type">
-              <% roastsType.forEach((roast) => { %>
+			<label for="roast_type">Roast Type:</label>
+			<select name="roast_type" id="roast_type">
+				<% roastsType.forEach((roast) => { %>
                 <option value="<%= roast.type %>" <%= product.roast_type === roast.type ? "selected" : "" %> > <%= roast.type %> </option>
               <% }); %>
-            </select>
+			</select>
 
-            <label for="price">Price:</label>
-            <input type="number" name="price" id="price" step="0.01" value="<%= product.price %>" required>
+			<label for="price">Price:</label>
+			<input
+				type="number"
+				name="price"
+				id="price"
+				step="0.01"
+				min="0"
+				value="<%= product.price %>"
+				required
+			/>
 
-            <button type="submit">Update</button>
+			<button type="submit">Update</button>
         </form>
     </body>
 </html>

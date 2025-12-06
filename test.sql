@@ -86,3 +86,7 @@ VALUES
 ('Light', 'Omni'),
 ('Medium', 'Omni'),
 ('Dark', 'Omni');
+
+-- Delete product 
+
+DELETE FROM coffees WHERE id = $1;

@@ -220,8 +220,6 @@ const postProductUpdate = [
 			varieties,
 		};
 
-		console.log("postProductUpdate:", updatedProduct);
-
 		try {
 			await db.updateProduct(updatedProduct, productId);
 			res.redirect("/products");
@@ -231,6 +229,18 @@ const postProductUpdate = [
 		}
 	},
 ];
+
+async function postDeleteProduct(req, res) {
+	const productId = Number(req.params.id);
+
+	try {
+		await db.deleteProduct(productId);
+		res.redirect("/products");
+	} catch (err) {
+		console.error("Error deleting product:", err);
+		res.status(500).send("Server error during deletion.");
+	}
+}
 
 // Helpers
 
@@ -266,4 +276,5 @@ module.exports = {
 	postNewProduct,
 	getProductEditForm,
 	postProductUpdate,
+	postDeleteProduct,
 };

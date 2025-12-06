@@ -396,7 +396,6 @@ async function updateProduct(productData, productId) {
 		}
 
 		await client.query("COMMIT");
-		console.log("updateProduct Coffee Id:", coffeeId);
 
 		return coffeeId;
 	} catch (err) {
@@ -407,6 +406,11 @@ async function updateProduct(productData, productId) {
 	} finally {
 		client.release();
 	}
+}
+
+// As there is ON DELETE CASCADE constraint it doesn't need to be a transaction. The delete is completely safe and atomic by itself, unlike the update above for example.
+async function deleteProduct(productId) {
+	await pool.query(`DELETE FROM coffees WHERE id = $1;`, [productId]);
 }
 
 module.exports = {
@@ -420,4 +424,5 @@ module.exports = {
 	getAllRoastsTypes,
 	postNewProduct,
 	updateProduct,
+	deleteProduct,
 };

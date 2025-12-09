@@ -3,5 +3,13 @@
 	<body>
 		<h1><%= title %></h1>
 		<a href="/">Back to Home</a>
+		<a href="category/new">Add Category</a>
+		<div class="product-container">
+			<ul>
+				<% categories.forEach((category) => { %>
+				<li><%= category.category%></li>
+				<% }) %>
+			</ul>
+		</div>
 	</body>
 </html>

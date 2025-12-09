@@ -413,6 +413,15 @@ async function deleteProduct(productId) {
 	await pool.query(`DELETE FROM coffees WHERE id = $1;`, [productId]);
 }
 
+// Categories Queries
+
+async function getAllCategories() {
+	const { rows } = await pool.query(
+		"SELECT DISTINCT * FROM categories ORDER BY category;"
+	);
+	return rows
+}
+
 module.exports = {
 	getAllProducts,
 	getProductById,
@@ -425,4 +434,5 @@ module.exports = {
 	postNewProduct,
 	updateProduct,
 	deleteProduct,
+	getAllCategories,
 };

@@ -1,0 +1,13 @@
+<html>
+	<%- include('./partials/head.ejs') %>
+	<body>
+		<h1><%= title %></h1>
+		<%- include('./partials/errors.ejs') %>
+		<form action="new" method="post">
+			<label for="new_category">Category Name:</label>
+			<input type="text" name="new_category" id="new_category" required />
+			<button type="submit">Add</button>
+		</form>
+	</body>
+</html>
+

@@ -419,7 +419,34 @@ async function getAllCategories() {
 	const { rows } = await pool.query(
 		"SELECT DISTINCT * FROM categories ORDER BY category;"
 	);
-	return rows
+	return rows;
+}
+
+async function postNewCategory(newCategory) {
+	const client = await pool.connect();
+
+	try {
+		await client.query("BEGIN");
+
+		await client.query(
+			`
+			INSERT INTO categories (category)
+			VALUES ($1)
+			ON CONFLICT (category)
+            DO UPDATE SET category = EXCLUDED.category
+            RETURNING id AS category_id;
+			`,
+			[newCategory]
+		);
+
+		await client.query("COMMIT");
+	} catch (err) {
+		await client.query("ROLLBACK");
+		console.error("postNewCategory:", err);
+		throw err;
+	} finally {
+		client.release();
+	}
 }
 
 module.exports = {
@@ -435,4 +462,5 @@ module.exports = {
 	updateProduct,
 	deleteProduct,
 	getAllCategories,
+	postNewCategory,
 };

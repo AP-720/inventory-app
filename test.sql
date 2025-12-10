@@ -90,3 +90,6 @@ VALUES
 -- Delete product 
 
 DELETE FROM coffees WHERE id = $1;
+
+ALTER TABLE categories
+ADD CONSTRAINT category_name_key UNIQUE (category);

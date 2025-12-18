@@ -2,6 +2,7 @@
 	<%- include('./partials/head.ejs') %>
 	<body>
 		<h1><%= title %></h1>
+		<a href="/categories">Back to Categories</a>
 		<%- include('./partials/errors.ejs') %>
 		<form action="<%= category.id %>/update" method="post">
 			<input

@@ -2,6 +2,7 @@
 	<%- include('./partials/head.ejs') %>
 	<body>
 		<h1><%= title %></h1>
+		<a href="/products">Back to Products</a>
 		<%- include('./partials/errors.ejs') %>
 		<form action="new" method="post">
 			<label for="coffee_name">Name:</label>
@@ -34,7 +35,7 @@
 				<% }); %>
 			</fieldset>
 
-			<label for="tasting_notes">Tasting Notes::</label>
+			<label for="tasting_notes">Tasting Notes:</label>
 			<input type="text" name="tasting_notes" id="tasting_notes" required />
 
 			<label for="roast_style">Roast Style:</label>

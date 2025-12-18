@@ -9,7 +9,7 @@ const validateNewCategory = [
 		.notEmpty()
 		.withMessage("Category Name must not be empty.")
 		.isLength({ min: 2, max: 255 })
-		.withMessage(`Category name ${lengthErr}`),
+		.withMessage(`Category Name ${lengthErr}`),
 ];
 
 async function getAllCategories(req, res) {
@@ -47,10 +47,10 @@ const postNewCategory = [
 			});
 		}
 
-		const { newCategory } = matchedData(req);
+		const { category } = matchedData(req);
 
 		try {
-			await db.postNewCategory(newCategory);
+			await db.postNewCategory(category);
 			res.redirect("/categories");
 		} catch (err) {
 			console.error(err);
@@ -61,8 +61,6 @@ const postNewCategory = [
 
 async function getEditCategory(req, res) {
 	const categoryId = Number(req.params.id);
-
-	console.log("getEditCategory:", categoryId);
 
 	try {
 		// Remember to deconstruct the result to be able to access them as objects.
@@ -97,7 +95,7 @@ const postEditCategory = [
 			});
 		}
 
-		const categoryId = Number(req.params.id)
+		const categoryId = Number(req.params.id);
 		const { category } = matchedData(req);
 		console.log("postEditCategory:", categoryId, category);
 
@@ -111,10 +109,23 @@ const postEditCategory = [
 	},
 ];
 
+async function postDeleteCategory(req, res) {
+	const categoryId = Number(req.params.id);
+
+	try {
+		await db.deleteCategory(categoryId);
+		res.redirect("/categories");
+	} catch (err) {
+		console.error("Error deleting category:", err);
+		res.status(500).send("Server error during deletion. ");
+	}
+}
+
 module.exports = {
 	getAllCategories,
 	getNewCategory,
 	postNewCategory,
 	getEditCategory,
 	postEditCategory,
+	postDeleteCategory,
 };

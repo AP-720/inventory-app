@@ -93,3 +93,14 @@ DELETE FROM coffees WHERE id = $1;
 
 ALTER TABLE categories
 ADD CONSTRAINT category_name_key UNIQUE (category);
+
+ALTER TABLE product_categories
+DROP CONSTRAINT product_categories_category_id_fkey;
+
+ALTER TABLE product_categories
+ADD CONSTRAINT product_categories_category_id_fkey 
+FOREIGN KEY (category_id) 
+REFERENCES categories(id)
+ON DELETE CASCADE;
+
+DELETE FROM categories WHERE id = $1;

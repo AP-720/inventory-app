@@ -1,11 +1,19 @@
 <html>
 	<%- include('./partials/head.ejs') %>
 	<body>
-		<h1><%= category.category %></h1>
+		<h1><%= title %></h1>
 		<%- include('./partials/errors.ejs') %>
 		<form action="<%= category.id %>/update" method="post">
+			<input
+				type="text"
+				name="category"
+				id="category"
+				value="<%= category.category %>"
+				required
+			/>
 			<button type="submit">Update</button>
 		</form>
+
 		<form
 			action="<%= category.id %>/delete"
 			method="POST"

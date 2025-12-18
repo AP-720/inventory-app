@@ -449,6 +449,33 @@ async function postNewCategory(newCategory) {
 	}
 }
 
+async function getCategoryById(categoryId) {
+	const { rows } = await pool.query(
+		`
+		SELECT * FROM categories WHERE id = $1;
+		`,
+		[categoryId]
+	);
+	return rows;
+}
+
+async function updateCategory(categoryId, category) {
+	try {
+		await pool.query(
+			`
+			UPDATE categories
+			SET category = $1
+			WHERE id = $2
+			RETURNING id as categories_id;
+			`,
+			[category, categoryId]
+		);
+	} catch (err) {
+		console.error("updateCategory:", err);
+		throw err;
+	}
+}
+
 module.exports = {
 	getAllProducts,
 	getProductById,
@@ -463,4 +490,6 @@ module.exports = {
 	deleteProduct,
 	getAllCategories,
 	postNewCategory,
+	getCategoryById,
+	updateCategory,
 };

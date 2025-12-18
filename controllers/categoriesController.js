@@ -4,7 +4,7 @@ const { body, validationResult, matchedData } = require("express-validator");
 const lengthErr = "must be between 2 and 255 characters.";
 
 const validateNewCategory = [
-	body("new_category")
+	body("category")
 		.trim()
 		.notEmpty()
 		.withMessage("Category Name must not be empty.")
@@ -32,20 +32,6 @@ async function getNewCategory(req, res) {
 	}
 }
 
-// async function postNewCategory(req, res) {
-// 	const newCategory = req.body.new_category;
-
-// 	console.log(newCategory);
-
-// 	try {
-// 		// await db.postNewCategory(newCategory)
-// 		res.redirect("/categories");
-// 	} catch (err) {
-// 		console.error(err);
-// 		res.status(500).send("Server error");
-// 	}
-// }
-
 const postNewCategory = [
 	validateNewCategory,
 	async (req, res) => {
@@ -61,12 +47,62 @@ const postNewCategory = [
 			});
 		}
 
-		const { new_category } = matchedData(req);
+		const { newCategory } = matchedData(req);
 
 		try {
-			await db.postNewCategory(new_category);
-			// console.log(new_category);
+			await db.postNewCategory(newCategory);
+			res.redirect("/categories");
+		} catch (err) {
+			console.error(err);
+			res.status(500).send("Server error");
+		}
+	},
+];
 
+async function getEditCategory(req, res) {
+	const categoryId = Number(req.params.id);
+
+	console.log("getEditCategory:", categoryId);
+
+	try {
+		// Remember to deconstruct the result to be able to access them as objects.
+		const [category] = await db.getCategoryById(categoryId);
+
+		if (!category) {
+			res.status(404).send("Product not found");
+			return;
+		}
+
+		res.render("categoryDetails", { title: "Edit Category", category });
+	} catch (err) {
+		console.error("Error loading category edit form:", err);
+		res.status(500).send("Server error");
+	}
+}
+
+const postEditCategory = [
+	validateNewCategory,
+	async (req, res) => {
+		const errors = validationResult(req);
+
+		if (!errors.isEmpty()) {
+			const categoryId = Number(req.params.id);
+
+			const category = await db.getCategoryById(categoryId);
+
+			return res.status(400).render("categoryDetails", {
+				title: "Edit Category",
+				category,
+				errors: errors.array(),
+			});
+		}
+
+		const categoryId = Number(req.params.id)
+		const { category } = matchedData(req);
+		console.log("postEditCategory:", categoryId, category);
+
+		try {
+			await db.updateCategory(categoryId, category);
 			res.redirect("/categories");
 		} catch (err) {
 			console.error(err);
@@ -79,4 +115,6 @@ module.exports = {
 	getAllCategories,
 	getNewCategory,
 	postNewCategory,
+	getEditCategory,
+	postEditCategory,
 };

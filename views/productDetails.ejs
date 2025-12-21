@@ -96,6 +96,18 @@
 				required
 			/>
 
+			<fieldset>
+				<legend>Category:</legend>
+				<% categories.forEach((category) => { %>
+				<div>
+					<input type="checkbox" name="categories" id="<%= category.category %>"
+					value="<%= category.category %>" <%=
+					product.categories.includes(category.category) ? "checked" : "" %> >
+					<label for="<%= category.category %>"><%= category.category %></label>
+				</div>
+				<% }); %>
+			</fieldset>
+
 			<button type="submit">Update</button>
 		
         </form>

@@ -124,6 +124,13 @@ async function getAllRoastsTypes() {
 	return rows;
 }
 
+async function getAllCategories() {
+	const { rows } = await pool.query(
+		"SELECT DISTINCT category FROM categories ORDER BY category;"
+	);
+	return rows;
+}
+
 async function postNewProduct(newProduct) {
 	const {
 		coffee_name,
@@ -273,6 +280,7 @@ async function updateProduct(productData, productId) {
 		roast_style,
 		roast_type,
 		varieties,
+		categories,
 	} = productData;
 
 	// Using a client from the pool means that uses same connection throughout, all queries use same connection, Atomicity: All operations succeed or all fail. So use when related operations that must succeed together.
@@ -299,6 +307,26 @@ async function updateProduct(productData, productId) {
 				varietyIdArray.push(result.rows[0].variety_id);
 			} catch (err) {
 				console.error("Error during variety upsert:", err);
+			}
+		}
+
+		// Upsert categories and collect ids
+		const categoriesIdArray = [];
+		const upsertCategoriesSQL = `
+            INSERT INTO categories (category)
+            VALUES ($1)
+            ON CONFLICT (category)
+            DO UPDATE SET category = EXCLUDED.category
+            RETURNING id AS category_id;
+        `;
+
+		for (const category of categories) {
+			try {
+				const result = await client.query(upsertCategoriesSQL, [category]);
+
+				categoriesIdArray.push(result.rows[0].category_id);
+			} catch (err) {
+				console.error("Error during category upsert:", err);
 			}
 		}
 
@@ -373,17 +401,17 @@ async function updateProduct(productData, productId) {
 
 		const coffeeId = coffeeResult.rows[0].coffee_id;
 
-		// If there are varieties, batch insert them into the join table
-		if (varietyIdArray.length > 0) {
-			// Delete old variety links before inserting new ones, otherwise old varieties stick around even if the user removed them.
-			await client.query(
-				`
+		// Delete old variety links before inserting new ones, otherwise old varieties stick around even if the user removed them.
+		await client.query(
+			`
 			DELETE FROM coffee_varieties 
 			WHERE coffee_id = $1
 			`,
-				[coffeeId]
-			);
+			[coffeeId]
+		);
 
+		// If there are varieties, batch insert them into the join table
+		if (varietyIdArray.length > 0) {
 			// Create an array the same length as the varietyIdArray and fill it all with the coffeeId so can be used with UNNEST
 			const coffeeIdArray = Array(varietyIdArray.length).fill(coffeeId);
 			await client.query(
@@ -392,6 +420,28 @@ async function updateProduct(productData, productId) {
         SELECT * FROM UNNEST($1::int[], $2::int[]) AS t(coffee_id, variety_id);
         `,
 				[coffeeIdArray, varietyIdArray]
+			);
+		}
+
+		// Delete old category links before inserting new ones, otherwise old categories stick around even if the user removed them.
+		await client.query(
+			`
+			DELETE FROM product_categories 
+			WHERE coffee_id = $1
+			`,
+			[coffeeId]
+		);
+
+		// If there are categories, batch insert them into the join table
+		if (categoriesIdArray.length > 0) {
+			// Create an array the same length as the categoriesIdArray and fill it all with the coffeeId so can be used with UNNEST
+			const coffeeIdArray = Array(categoriesIdArray.length).fill(coffeeId);
+			await client.query(
+				`
+        INSERT INTO product_categories (coffee_id, category_id )
+        SELECT * FROM UNNEST($1::int[], $2::int[]) AS t(coffee_id, category_id );
+        `,
+				[coffeeIdArray, categoriesIdArray]
 			);
 		}
 
@@ -488,6 +538,7 @@ module.exports = {
 	getAllVarieties,
 	getAllRoastsStyles,
 	getAllRoastsTypes,
+	getAllCategories,
 	postNewProduct,
 	updateProduct,
 	deleteProduct,

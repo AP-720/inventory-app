@@ -62,6 +62,21 @@
 				required
 			/>
 
+			<fieldset>
+				<legend>Category:</legend>
+				<% categories.forEach((category) => { %>
+				<div>
+					<input
+						type="checkbox"
+						name="categories"
+						id="<%= category.category %>"
+						value="<%= category.category %>"
+					/>
+					<label for="<%= category.category %>"><%= category.category %></label>
+				</div>
+				<% }); %>
+			</fieldset>
+
 			<button type="submit">Add</button>
 		</form>
 	</body>

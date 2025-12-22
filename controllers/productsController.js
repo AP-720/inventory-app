@@ -72,17 +72,21 @@ async function getAllProducts(req, res) {
 
 async function getNewProduct(req, res) {
 	try {
-		const [varieties, roastsStyles, roastsType] = await Promise.all([
-			db.getAllVarieties(),
-			db.getAllRoastsStyles(),
-			db.getAllRoastsTypes(),
-		]);
+		const [varieties, roastsStyles, roastsType, categories] = await Promise.all(
+			[
+				db.getAllVarieties(),
+				db.getAllRoastsStyles(),
+				db.getAllRoastsTypes(),
+				db.getAllCategories(),
+			]
+		);
 
 		res.render("newProduct", {
 			title: "New Product",
 			varieties,
 			roastsStyles,
 			roastsType,
+			categories,
 		});
 	} catch (err) {
 		console.error(err);
@@ -121,6 +125,15 @@ const postNewProduct = [
 			? req.body.varieties
 			: [req.body.varieties];
 
+		// If not checkboxes are submitted in a form then req.body.categories would be undefined.
+		// The first check makes sure req.body.categories exists. If it does it then handles a single value vs an array. If it is a single value it put it into a an array as that is the format needed in the query.
+		// If req.body.categories doesn't exist then a empty array is returned rather than undefined.
+		const categories = req.body.categories
+			? Array.isArray(req.body.categories)
+				? req.body.categories
+				: [req.body.categories]
+			: [];
+
 		const newProduct = {
 			coffee_name,
 			origin,
@@ -132,6 +145,7 @@ const postNewProduct = [
 			roast_style,
 			roast_type,
 			varieties,
+			categories,
 		};
 
 		try {

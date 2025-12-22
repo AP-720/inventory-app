@@ -143,6 +143,7 @@ async function postNewProduct(newProduct) {
 		roast_style,
 		roast_type,
 		varieties,
+		categories,
 	} = newProduct;
 
 	// Using a client from the pool means that uses same connection throughout, all queries use same connection, Atomicity: All operations succeed or all fail. So use when related operations that must succeed together.
@@ -169,6 +170,26 @@ async function postNewProduct(newProduct) {
 				varietyIdArray.push(result.rows[0].variety_id);
 			} catch (err) {
 				console.error("Error during variety upsert:", err);
+			}
+		}
+
+		// Upsert categories and collect ids
+		const categoriesIdArray = [];
+		const upsertCategoriesSQL = `
+            INSERT INTO categories (category)
+            VALUES ($1)
+            ON CONFLICT (category)
+            DO UPDATE SET category = EXCLUDED.category
+            RETURNING id AS category_id;
+        `;
+
+		for (const category of categories) {
+			try {
+				const result = await client.query(upsertCategoriesSQL, [category]);
+
+				categoriesIdArray.push(result.rows[0].category_id);
+			} catch (err) {
+				console.error("Error during category upsert:", err);
 			}
 		}
 
@@ -251,6 +272,19 @@ async function postNewProduct(newProduct) {
         SELECT * FROM UNNEST($1::int[], $2::int[]) AS t(coffee_id, variety_id);
         `,
 				[coffeeIdArray, varietyIdArray]
+			);
+		}
+
+		// If there are categories, batch insert them into the join table
+		if (categoriesIdArray.length > 0) {
+			// Create an array the same length as the categoriesIdArray and fill it all with the coffeeId so can be used with UNNEST
+			const coffeeIdArray = Array(categoriesIdArray.length).fill(coffeeId);
+			await client.query(
+				`
+        INSERT INTO product_categories (coffee_id, category_id )
+        SELECT * FROM UNNEST($1::int[], $2::int[]) AS t(coffee_id, category_id );
+        `,
+				[coffeeIdArray, categoriesIdArray]
 			);
 		}
 

@@ -325,44 +325,20 @@ async function updateProduct(productData, productId) {
 		await client.query("BEGIN");
 
 		// Upsert varieties and collect ids
-		const varietyIdArray = [];
-		const upsertVarietySQL = `
-            INSERT INTO varieties (name)
-            VALUES ($1)
-            ON CONFLICT (name)
-            DO UPDATE SET name = EXCLUDED.name
-            RETURNING id AS variety_id;
-        `;
-
-		for (const varietyName of varieties) {
-			try {
-				const result = await client.query(upsertVarietySQL, [varietyName]);
-
-				varietyIdArray.push(result.rows[0].variety_id);
-			} catch (err) {
-				console.error("Error during variety upsert:", err);
-			}
-		}
+		const varietyIdArray = await upsertArrayHelper(
+			client,
+			"varieties",
+			"name",
+			varieties
+		);
 
 		// Upsert categories and collect ids
-		const categoriesIdArray = [];
-		const upsertCategoriesSQL = `
-            INSERT INTO categories (category)
-            VALUES ($1)
-            ON CONFLICT (category)
-            DO UPDATE SET category = EXCLUDED.category
-            RETURNING id AS category_id;
-        `;
-
-		for (const category of categories) {
-			try {
-				const result = await client.query(upsertCategoriesSQL, [category]);
-
-				categoriesIdArray.push(result.rows[0].category_id);
-			} catch (err) {
-				console.error("Error during category upsert:", err);
-			}
-		}
+		const categoriesIdArray = await upsertArrayHelper(
+			client,
+			"categories",
+			"category",
+			categories
+		);
 
 		// Individual upserts
 		const originResult = await client.query(
@@ -563,6 +539,43 @@ async function updateCategory(categoryId, category) {
 async function deleteCategory(categoryId) {
 	await pool.query("DELETE FROM categories WHERE id = $1;", [categoryId]);
 }
+
+// Helper
+
+async function upsertArrayHelper(db, tableName, columnName, array) {
+	// Whitelist allowed tables and their columns. Need to use a whitelist rather than what I was doing, passing in the string interpolation of the table and column names. This would of allowed sql injection. Only value can be passed in via parameterization.
+
+	const allowedTables = {
+		varieties: ["name"],
+		categories: ["category"],
+	};
+
+	// Validate table exists and column is allowed for that table
+	if (!allowedTables[tableName]) {
+		throw new Error(`Invalid table name: ${tableName}`);
+	}
+
+	if (!allowedTables[tableName].includes(columnName)) {
+		throw new Error(`Invalid column ${columnName} for table ${tableName}`);
+	}
+
+	const idArray = [];
+	const upsertSQL = `
+            INSERT INTO ${tableName} (${columnName})
+            VALUES ($1)
+            ON CONFLICT (${columnName})
+            DO UPDATE SET ${columnName} = EXCLUDED.${columnName}
+            RETURNING id AS result_id;
+        `;
+
+	for (const item of array) {
+		const result = await db.query(upsertSQL, [item]);
+		idArray.push(result.rows[0].result_id);
+	}
+
+	return idArray;
+}
+
 module.exports = {
 	getAllProducts,
 	getProductById,

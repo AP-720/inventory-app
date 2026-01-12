@@ -4,5 +4,20 @@
 		<h1><%= title %></h1>
 		<a href="/products">Products</a>
 		<a href="/categories">Categories</a>
+		<div class="categories-container">
+			<h2>Categories</h2>
+			<% categories.forEach((category) => { %>
+			<div class="category-container">
+				<h3><%= category.category_name %></h3>
+				<% category.products.forEach((product) => { %>
+				<div class="product-card">
+					<h4><%= product.coffee_name %></h4>
+					<p><%= product.roaster_name %></p>
+					<a href="<%= product.coffee_id %>">More info</a>
+				</div>
+				<%}); %>
+			</div>
+			<% }) %>
+		</div>
 	</body>
 </html>

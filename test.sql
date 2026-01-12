@@ -104,3 +104,18 @@ REFERENCES categories(id)
 ON DELETE CASCADE;
 
 DELETE FROM categories WHERE id = $1;
+
+
+SELECT 
+    categories.id AS category_id,
+    categories.category AS category_name,
+    coffees.id AS coffee_id,
+    coffees.name AS coffee_name, 
+    roasters.name AS roaster_name
+FROM categories
+LEFT JOIN product_categories ON categories.id = product_categories.category_id
+LEFT JOIN coffees ON product_categories.coffee_id = coffees.id
+LEFT JOIN roasters ON coffees.roaster_id = roasters.id
+ORDER BY categories.category, coffees.name;
+
+

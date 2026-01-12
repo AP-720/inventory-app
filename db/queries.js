@@ -540,6 +540,49 @@ async function deleteCategory(categoryId) {
 	await pool.query("DELETE FROM categories WHERE id = $1;", [categoryId]);
 }
 
+async function getProductsByCategory() {
+	const { rows } = await pool.query(
+		`
+		SELECT 
+    	categories.id AS category_id,
+    	categories.category AS category_name,
+    	coffees.id AS coffee_id,
+    	coffees.name AS coffee_name, 
+    	roasters.name AS roaster_name
+		FROM categories
+		LEFT JOIN product_categories ON categories.id = product_categories.category_id
+		LEFT JOIN coffees ON product_categories.coffee_id = coffees.id
+		LEFT JOIN roasters ON coffees.roaster_id = roasters.id
+		ORDER BY categories.category, coffees.name;
+		`
+	);
+
+	const groupedCategories = rows.reduce((acc, row) => {
+		// Destructor the row, so its possible to restructure the data format. Prevents duplication of category_id_category_name
+		const { category_id, category_name, coffee_id, coffee_name, roaster_name } =
+			row;
+
+		if (!acc[row.category_id]) {
+			// Create the category structure
+			acc[row.category_id] = { category_id, category_name, products: [] };
+		}
+
+		// Only add product if it exists (handles LEFT JOIN NULLs)
+		if (coffee_id) {
+			acc[row.category_id].products.push({
+				coffee_id,
+				coffee_name,
+				roaster_name,
+			});
+		}
+
+		return acc;
+	}, {});
+
+	// Covert to an array as easier to process in the views. 
+	return Object.values(groupedCategories);
+}
+
 // Helper
 
 async function upsertArrayHelper(db, tableName, columnName, array) {
@@ -594,4 +637,5 @@ module.exports = {
 	getCategoryById,
 	updateCategory,
 	deleteCategory,
+	getProductsByCategory,
 };

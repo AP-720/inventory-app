@@ -97,7 +97,6 @@ const postEditCategory = [
 
 		const categoryId = Number(req.params.id);
 		const { category } = matchedData(req);
-		console.log("postEditCategory:", categoryId, category);
 
 		try {
 			await db.updateCategory(categoryId, category);

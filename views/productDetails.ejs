@@ -4,7 +4,7 @@
         <h1><%= title %></h1>
 		<a href="/products">Back to Products</a>
         <%- include('./partials/errors.ejs') %>
-        <form action="<%= product.id %>/update" method="post">
+        <form action="/products/<%= product.id %>/update" method="post">
            <label for="coffee_name">Name:</label>
 			<input
 				type="text"

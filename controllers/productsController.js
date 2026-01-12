@@ -158,6 +158,24 @@ const postNewProduct = [
 	},
 ];
 
+async function getProductDetails(req, res) {
+	const productId = Number(req.params.id);
+
+	try {
+		const product = await db.getProductById(productId);
+
+		if (!product) {
+			res.status(404).send("Product not found");
+			return;
+		}
+
+		res.render("productPage", { title: "Product Details", product });
+	} catch (err) {
+		console.error("Error loading product details:", err);
+		res.status(500).send("Server error");
+	}
+}
+
 async function getProductEditForm(req, res) {
 	const productId = Number(req.params.id);
 
@@ -171,8 +189,6 @@ async function getProductEditForm(req, res) {
 			res.status(404).send("Product not found");
 			return;
 		}
-
-		console.log("getProductEditForm:", product);
 
 		res.render("productDetails", {
 			title: "Edit Product",
@@ -309,6 +325,7 @@ module.exports = {
 	getAllProducts,
 	getNewProduct,
 	postNewProduct,
+	getProductDetails,
 	getProductEditForm,
 	postProductUpdate,
 	postDeleteProduct,

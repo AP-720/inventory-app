@@ -5,9 +5,6 @@ async function getIndex(req, res) {
 		// const products = await db.getAllProducts();
 		const categories = await db.getProductsByCategory();
 
-		console.log(categories);
-		
-
 		res.render("index", {
 			title: "Coffee Inventory",
 			// products,

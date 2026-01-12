@@ -124,13 +124,6 @@ async function getAllRoastsTypes() {
 	return rows;
 }
 
-async function getAllCategories() {
-	const { rows } = await pool.query(
-		"SELECT DISTINCT category FROM categories ORDER BY category;"
-	);
-	return rows;
-}
-
 async function postNewProduct(newProduct) {
 	const {
 		coffee_name,
@@ -289,7 +282,6 @@ async function postNewProduct(newProduct) {
 		}
 
 		await client.query("COMMIT");
-		console.log("postNewProduct Coffee Id:", coffeeId);
 
 		return coffeeId;
 	} catch (err) {
@@ -558,12 +550,12 @@ async function getProductsByCategory() {
 	);
 
 	const groupedCategories = rows.reduce((acc, row) => {
-		// Destructor the row, so its possible to restructure the data format. Prevents duplication of category_id_category_name
+		// Destructor the row, so its possible to restructure the data format. Prevents duplication of category_id and category_name
 		const { category_id, category_name, coffee_id, coffee_name, roaster_name } =
 			row;
 
 		if (!acc[row.category_id]) {
-			// Create the category structure
+			// Create the category structure with empty array ready
 			acc[row.category_id] = { category_id, category_name, products: [] };
 		}
 
@@ -579,7 +571,7 @@ async function getProductsByCategory() {
 		return acc;
 	}, {});
 
-	// Covert to an array as easier to process in the views. 
+	// Covert to an array as easier to process in the views.
 	return Object.values(groupedCategories);
 }
 
@@ -628,7 +620,6 @@ module.exports = {
 	getAllVarieties,
 	getAllRoastsStyles,
 	getAllRoastsTypes,
-	getAllCategories,
 	postNewProduct,
 	updateProduct,
 	deleteProduct,

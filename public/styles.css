@@ -38,6 +38,7 @@ body {
 	background-color: var(--bg-main);
 	margin: 0;
 	padding: var(--spacing-md);
+    color: var(--text-main);
 }
 
 h1,
@@ -56,6 +57,10 @@ a {
 
 a:hover {
 	text-decoration: underline;
+}
+
+a:visited {
+	color: inherit;
 }
 
 .page-container {
@@ -79,8 +84,6 @@ a:hover {
 	gap: var(--spacing-sm);
 }
 
-/* Body section */
-
 .body-container {
 	padding: var(--spacing-md) 0 0 0;
 	display: flex;
@@ -91,9 +94,8 @@ a:hover {
 
 .section-header {
 	margin-inline: auto;
+	text-decoration: underline;
 }
-
-/* Categories */
 
 .categories-container {
 	/* border: solid red; */
@@ -111,17 +113,35 @@ a:hover {
 .card-container {
 	display: grid;
 	grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
-    gap: var(--spacing-md);
+	gap: var(--spacing-md);
 }
 
 .product-card {
 	border: solid 2px var(--primary-hover);
-    background-color: var(--primary);
-    padding: var(--spacing-md);
+	background-color: var(--primary);
+	padding: var(--spacing-md);
+	display: grid;
 }
 
 .card-header {
-    padding: 0 0 var(--spacing-xs) 0;
+	padding: 0 0 var(--spacing-xs) 0;
+}
+
+/* Product Page */
+
+.product-container {
+	border: solid var(--secondary);
+	background-color: var(--bg-surface);
+	padding: var(--spacing-xl);
+	margin: 0 0 var(--spacing-md) 0;
+	display: grid;
+	grid-template-columns: repeat(auto-fill, minmax(20rem, 1fr));
+	gap: var(--spacing-md);
+}
+
+/* Product card */
+
+.product-card {
 }
 
 /* Utilities */
@@ -132,4 +152,8 @@ a:hover {
 
 .bold {
 	font-weight: bold;
+}
+
+.justify-end {
+	justify-self: end;
 }

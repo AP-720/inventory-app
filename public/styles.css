@@ -38,7 +38,7 @@ body {
 	background-color: var(--bg-main);
 	margin: 0;
 	padding: var(--spacing-md);
-    color: var(--text-main);
+	color: var(--text-main);
 }
 
 h1,
@@ -47,8 +47,13 @@ h3,
 h4,
 h5,
 h6,
-p {
+p,
+ul {
 	margin: 0;
+}
+
+ul {
+	padding-left: var(--spacing-sm);
 }
 
 a {
@@ -144,6 +149,44 @@ a:visited {
 .product-card {
 }
 
+/* Product edit form */
+
+.product-edit-container {
+	border: solid var(--secondary);
+	background-color: var(--bg-surface);
+	padding: var(--spacing-xl);
+	margin: 0 0 var(--spacing-md) 0;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.product-edit-form {
+	display: grid;
+	/* grid-template-columns: minmax(20rem, 25rem); */
+	gap: var(--spacing-xs);
+	align-items: center;
+}
+
+.product-detail-container {
+	border: solid var(--secondary);
+	background-color: var(--bg-surface);
+	padding: var(--spacing-xl);
+	margin: 0 0 var(--spacing-md) 0;
+	display: grid;
+	grid-template-columns: 1fr;
+	justify-items: center;
+}
+
+/* Error */
+
+.error-container {
+	background-color: var(--secondary);
+	margin-inline: auto;
+	padding: var(--spacing-md);
+	margin-bottom: var(--spacing-md);
+}
+
 /* Utilities */
 
 .section-header {
@@ -156,4 +199,12 @@ a:visited {
 
 .justify-end {
 	justify-self: end;
+}
+
+.justify-self {
+	justify-self: center;
+}
+
+.text-align {
+	text-align: center;
 }

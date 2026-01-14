@@ -1,8 +1,21 @@
 <html>
 	<%- include('./partials/head.ejs') %>
-    <body>
-        <h1><%= title %></h1>
-		<a href="/products">Back to Products</a>
-       <%- include('./partials/productCard.ejs') %>
-    </body>
+	<body>
+		<div class="page-container">
+			<div class="header-container">
+				<h1>Coffee Inventory</h1>
+				<div class="nav-container">
+					<a href="/products">Back to Products</a>
+					<a href="/">Home</a>
+				</div>
+			</div>
+
+			<div class="body-container">
+				<h2 class="section-header"><%= title %></h2>
+				<div class="product-detail-container">
+					<%- include('./partials/productCard.ejs') %>
+				</div>
+			</div>
+		</div>
+	</body>
 </html>

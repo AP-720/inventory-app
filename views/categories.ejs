@@ -1,12 +1,22 @@
 <html>
 	<%- include('./partials/head.ejs') %>
 	<body>
-		<h1><%= title %></h1>
-		<a href="/">Back to Home</a>
-		<a href="categories/new">Add Category</a>
-		<div class="category-container">
-			<% categories.forEach((category) => { %> <%-
-			include('./partials/categoryCard.ejs', {category}) %> <% }) %>
+		<div class="page-container">
+			<div class="header-container">
+				<h1>Coffee Inventory</h1>
+				<div class="nav-container">
+					<a href="categories/new">Add Category</a>
+					<a href="/products">Products</a>
+					<a href="/">Home</a>
+				</div>
+			</div>
+			<div class="body-container">
+				<h2 class="section-header"><%= title %></h2>
+				<div class="categories-container">
+					<% categories.forEach((category) => { %> <%-
+					include('./partials/categoryCard.ejs', {category}) %> <% }) %>
+				</div>
+			</div>
 		</div>
 	</body>
 </html>

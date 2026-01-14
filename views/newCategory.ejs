@@ -1,13 +1,27 @@
 <html>
 	<%- include('./partials/head.ejs') %>
 	<body>
-		<h1><%= title %></h1>
-		<a href="/categories">Back to Categories</a>
-		<%- include('./partials/errors.ejs') %>
-		<form action="new" method="post">
-			<label for="category">Category Name:</label>
-			<input type="text" name="category" id="category" required />
-			<button type="submit">Add</button>
-		</form>
+		<div class="page-container">
+			<div class="header-container">
+				<h1>Coffee Inventory</h1>
+				<div class="nav-container">
+					<a href="/categories">Back to Categories</a>
+					<a href="/products">Products</a>
+					<a href="/">Home</a>
+				</div>
+			</div>
+
+			<div class="body-container">
+				<h2 class="section-header"><%= title %></h2>
+				<%- include('./partials/errors.ejs') %>
+				<div class="product-edit-container">
+					<form action="new" method="post">
+						<label for="category">Category Name:</label>
+						<input type="text" name="category" id="category" required />
+						<button type="submit">Add</button>
+					</form>
+				</div>
+			</div>
+		</div>
 	</body>
 </html>

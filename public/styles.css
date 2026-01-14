@@ -102,17 +102,6 @@ a:visited {
 	text-decoration: underline;
 }
 
-.categories-container {
-	/* border: solid red; */
-}
-
-.category-container {
-	border: solid var(--secondary);
-	background-color: var(--bg-surface);
-	padding: var(--spacing-xl);
-	margin: 0 0 var(--spacing-md) 0;
-}
-
 /* Product cards */
 
 .card-container {
@@ -144,11 +133,6 @@ a:visited {
 	gap: var(--spacing-md);
 }
 
-/* Product card */
-
-.product-card {
-}
-
 /* Product edit form */
 
 .product-edit-container {
@@ -163,7 +147,6 @@ a:visited {
 
 .product-edit-form {
 	display: grid;
-	/* grid-template-columns: minmax(20rem, 25rem); */
 	gap: var(--spacing-xs);
 	align-items: center;
 }
@@ -175,6 +158,35 @@ a:visited {
 	margin: 0 0 var(--spacing-md) 0;
 	display: grid;
 	grid-template-columns: 1fr;
+	justify-items: center;
+}
+
+/* Categories */
+
+.categories-container {
+	border: solid var(--secondary);
+	background-color: var(--bg-surface);
+	padding: var(--spacing-xl);
+	margin: 0 0 var(--spacing-md) 0;
+	display: grid;
+	grid-template-columns: 20rem;
+	justify-content: center;
+	gap: var(--spacing-md);
+}
+
+.category-container {
+	border: solid var(--secondary);
+	background-color: var(--bg-surface);
+	padding: var(--spacing-xl);
+	margin: 0 0 var(--spacing-md) 0;
+}
+
+.category-card {
+	border: solid 2px var(--primary-hover);
+	background-color: var(--primary);
+	padding: var(--spacing-md);
+	display: grid;
+	grid-template-columns: 1fr 1fr;
 	justify-items: center;
 }
 

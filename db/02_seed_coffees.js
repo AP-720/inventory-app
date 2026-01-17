@@ -2,11 +2,11 @@ require("dotenv").config();
 const { Client } = require('pg')
 
 const SQL = `
-    INSERT INTO coffees (name, roaster_id, origin_id, process_id, price, producer, tasting_notes, roast_id)
+    INSERT INTO coffees (name, roaster_id, origin_id, process_id, price, tasting_notes, roast_id)
     VALUES 
-   ('Jairo Arcila', 1, 1, 1, 12.99, 'Jairo Arcila', 'Apricot, Marzipan, Soft Spice', 1),
-   ('Mahiga AA', 2, 2, 1, 11.50, 'Mahiga', 'Blackberry, Apple, Dried Fruit', 1),
-   ('Ethiopia Demelesh Guji Anaerobic Natural', 3, 3, 2, 14.50, 'Guji', 'Raspberry, Nasturtium, Concord Grape', 1);
+   ('Jairo Arcila', 1, 1, 1, 12.99, 'Apricot, Marzipan, Soft Spice', 1),
+   ('Mahiga AA', 2, 2, 1, 11.50, 'Blackberry, Apple, Dried Fruit', 1),
+   ('Ethiopia Demelesh Guji Anaerobic Natural', 3, 3, 2, 14.50, 'Raspberry, Nasturtium, Concord Grape', 1);
 `
 
 let dbUrl =
